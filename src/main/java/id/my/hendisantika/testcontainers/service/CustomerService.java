@@ -8,9 +8,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.env.Environment;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by IntelliJ IDEA.
@@ -41,5 +45,16 @@ public class CustomerService {
         log.info("------ Hitting database & not using cache! ------ ");
         return customerRepository.findByNameIgnoreCase(name).stream().map(customer ->
                 new CustomerDTO(customer.getName(), customer.getId())).toList();
+    }
+
+    public List<CustomerDTO> findExternal() {
+        String url =
+                env.getProperty("external.server.host") +
+                        env.getProperty("external.server.port") +
+                        "/customers";
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<CustomerDTO[]> extCust = restTemplate.getForEntity(url, CustomerDTO[].class);
+        return Arrays.asList(Objects.requireNonNull(extCust.getBody()));
     }
 }
