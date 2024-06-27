@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
@@ -38,6 +39,13 @@ public class CustomerHttpController {
     @GetMapping(value = "/customers-ext", produces = "application/json")
     public List<CustomerDTO> customersExt() {
         List<CustomerDTO> customers = this.customerService.findExternal();
+        log.info("Found {} customers", customers.size());
+        return customers;
+    }
+
+    @GetMapping("/customers/{name}")
+    public List<CustomerDTO> byName(@PathVariable String name) {
+        List<CustomerDTO> customers = this.customerService.findByName(name);
         log.info("Found {} customers", customers.size());
         return customers;
     }
