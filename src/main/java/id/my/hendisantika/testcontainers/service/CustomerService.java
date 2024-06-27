@@ -57,4 +57,8 @@ public class CustomerService {
         ResponseEntity<CustomerDTO[]> extCust = restTemplate.getForEntity(url, CustomerDTO[].class);
         return Arrays.asList(Objects.requireNonNull(extCust.getBody()));
     }
+
+    public void saveAsync(CustomerDTO data) {
+        publisher.publishCustomerCreatedEvent(data);
+    }
 }
