@@ -34,4 +34,11 @@ public class CustomerHttpController {
         log.info("Found {} customers", customers.size());
         return customers;
     }
+
+    @GetMapping(value = "/customers-ext", produces = "application/json")
+    public List<CustomerDTO> customersExt() {
+        List<CustomerDTO> customers = this.customerService.findExternal();
+        log.info("Found {} customers", customers.size());
+        return customers;
+    }
 }
