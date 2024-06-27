@@ -1,10 +1,14 @@
 package id.my.hendisantika.testcontainers.controller;
 
+import id.my.hendisantika.testcontainers.dto.CustomerDTO;
 import id.my.hendisantika.testcontainers.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -23,4 +27,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class CustomerHttpController {
 
     private final CustomerService customerService;
+
+    @GetMapping(value = "/customers", produces = "application/json")
+    public List<CustomerDTO> customers() {
+        List<CustomerDTO> customers = this.customerService.findAll();
+        log.info("Found {} customers", customers.size());
+        return customers;
+    }
 }
