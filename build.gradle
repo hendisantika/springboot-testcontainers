@@ -41,7 +41,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-testcontainers'
     testImplementation 'org.testcontainers:kafka'
     testImplementation 'org.testcontainers:postgresql'
-    testImplementation 'org.projectlombok:lombok:1.18.22'
+    testImplementation 'org.projectlombok:lombok:1.18.34'
 
     testAnnotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 }
