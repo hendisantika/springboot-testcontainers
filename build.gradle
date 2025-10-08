@@ -1,7 +1,7 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.3.1'
-    id 'io.spring.dependency-management' version '1.1.5'
+    id 'org.springframework.boot' version '3.5.6'
+    id 'io.spring.dependency-management' version '1.1.7'
 }
 
 group = 'id.my.hendisantika'
@@ -41,7 +41,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-testcontainers'
     testImplementation 'org.testcontainers:kafka'
     testImplementation 'org.testcontainers:postgresql'
-    testImplementation 'org.projectlombok:lombok:1.18.22'
+    testImplementation 'org.projectlombok:lombok:1.18.42'
 
     testAnnotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 }
