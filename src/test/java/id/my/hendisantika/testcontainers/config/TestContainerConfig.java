@@ -6,6 +6,9 @@ import org.springframework.boot.testcontainers.service.connection.ServiceConnect
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.KafkaContainer;
+import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 
@@ -22,7 +25,7 @@ import org.testcontainers.utility.DockerImageName;
 @Configuration
 public class TestContainerConfig {
 
-    public static final DockerImageName POSTGRES_IMAGE = DockerImageName.parse("postgres:17beta1-alpine3.20");
+    public static final DockerImageName POSTGRES_IMAGE = DockerImageName.parse("postgres:17.5-alpine3.22");
     public static final DockerImageName REDIS_IMAGE = DockerImageName.parse("redis:7.2.5-alpine3.20");
     public static final DockerImageName KAFKA_IMAGE = DockerImageName.parse("confluentinc/cp-kafka:7.6.1");
 
@@ -37,20 +40,34 @@ public class TestContainerConfig {
     // for a given Container.
     // For example, a PostgreSQLContainer will create both JdbcConnectionDetails and R2dbcConnectionDetails.
     @ServiceConnection(type = JdbcConnectionDetails.class)
-    public PostgresContainer postgresContainer() {
+    public PostgreSQLContainer<?> postgresContainer() {
 
         final long memoryInBytes = 64L * 1024L * 1024L;
         final long memorySwapInBytes = 128L * 1024L * 1024L;
 
-        return new PostgresContainer(POSTGRES_IMAGE)
+        return new PostgreSQLContainer<>(POSTGRES_IMAGE)
                 .waitingFor(Wait.forLogMessage(".*PostgreSQL init process complete;.*\\n", 1))
                 // The Reusable Containers feature keeps the same containers running between test sessions
                 .withReuse(true)
                 .withCreateContainerCmdModifier(cmd -> {
-                    cmd.withName("postgres");
                     cmd.getHostConfig()
                             .withMemory(memoryInBytes)
                             .withMemorySwap(memorySwapInBytes);
                 });
+    }
+
+    @Bean
+    @ServiceConnection
+    public KafkaContainer kafkaContainer() {
+        return new KafkaContainer(KAFKA_IMAGE)
+                .withReuse(true);
+    }
+
+    @Bean
+    public GenericContainer<?> pythonContainer() {
+        return new GenericContainer<>(DockerImageName.parse("python:3.12-slim"))
+                .withExposedPorts(5000)
+                .withReuse(true)
+                .withCommand("python", "-m", "http.server", "5000");
     }
 }
